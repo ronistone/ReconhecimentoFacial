@@ -60,7 +60,7 @@ class RegisterUser:
                 cv2.imshow('Salvando...', image)
                 cv2.waitKey(1)
 
-            if count > 300:
+            if count > 150:
                 break
 
         cv2.destroyAllWindows()
@@ -78,11 +78,14 @@ class RegisterUser:
 
 
         print("""\n\n\t\t\tAtenção:\n\n\tO sistema tirará fotos para o cadastro.
-                O usuário a ser cadastrado deve permanecer frente a câmera\n""")
+        O usuário a ser cadastrado deve permanecer frente a câmera\n""")
         input("Pressione ENTER para Continuar...")
 
         print(self.path)
         self.takePhoto()
+
+        dirty = open(path+'/check','w')
+        dirty.write(str(1))
 
         print("%s foi Cadastrado."%(self.name))
 

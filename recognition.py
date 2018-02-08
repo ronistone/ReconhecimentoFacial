@@ -5,22 +5,39 @@ import numpy as np
 
 class Recognition:
 
-    def __init__(self, DEBUG=False):
+    def __init__(self,path, DEBUG=False):
         self.__DEBUG = DEBUG
         self.names = [""]
-        self.path = 'training-data'
-        self.setup()
+        self.path = path
+
+        checkPath = self.path+'/check'
+        if os.path.isfile(checkPath):
+            with open(checkPath, 'r+') as f:
+                if(f.read() == '1'):
+                    self.isDirty = True
+                else:
+                    self.isDirty = False
+        else:
+            self.isDirty = True
+
         self.recognizer = cv2.face.LBPHFaceRecognizer_create()
         if os.path.isfile('train.yml'):
             self.recognizer.read('train.yml')
-        self.recognizer.train(self.faces, np.array(self.labels))
+
+        self.setup()
+        if self.isDirty:
+            self.recognizer.train(self.faces, np.array(self.labels))
         self.recognizer.write("train.yml")
+        with open(checkPath,'w') as f:
+            f.write('0')
 
         if self.__DEBUG:
             print("Total faces: ", len(self.faces))
             print("Total labels: ", len(self.labels))
             print("Pronto para reconhecimento")
 
+        self.faces = None
+        self.labels = None
 
 
 
@@ -30,7 +47,7 @@ class Recognition:
         face_cascade = cv2.CascadeClassifier('lbpcascade_frontalface.xml')
 
         faces = face_cascade.detectMultiScale(gray, 1.2, minNeighbors=5,
-                                                minSize=(20,20), maxSize=(400,400))
+                                                minSize=(10,10), maxSize=(600,600))
 
         if len(faces) == 0:
             return None,None
@@ -51,28 +68,29 @@ class Recognition:
 
 
             self.names.append(dir_name.split('-')[1].replace("_"," "))
-            label = int(dir_name.split('-')[2])
+            if self.isDirty:
+                label = int(dir_name.split('-')[2])
 
-            subject_dir_path = self.path + '/' + dir_name+'/'
-            images_names = os.listdir(subject_dir_path)
+                subject_dir_path = self.path + '/' + dir_name+'/'
+                images_names = os.listdir(subject_dir_path)
 
-            for image_name in images_names:
-                if image_name.startswith('.'):
-                    continue
+                for image_name in images_names:
+                    if image_name.startswith('.'):
+                        continue
 
-                image_path = subject_dir_path+"/"+image_name
-                image = cv2.imread(image_path)
+                    image_path = subject_dir_path+"/"+image_name
+                    image = cv2.imread(image_path)
 
-                if(self.__DEBUG):
-                    cv2.imshow("Training on image...", image)
-                    cv2.waitKey(50)
+                    if(self.__DEBUG):
+                        cv2.imshow("Training on image...", image)
+                        cv2.waitKey(50)
 
-                face, rect = self.detect_face(image)
+                    face, rect = self.detect_face(image)
 
-                if face is not None:
-                    (x,y,w,h) = rect[0]
-                    self.faces.append(face[y:y+w, x:x+h])
-                    self.labels.append(label)
+                    if face is not None:
+                        (x,y,w,h) = rect[0]
+                        self.faces.append(face[y:y+w, x:x+h])
+                        self.labels.append(label)
 
             count+=1
             print("Carregando... ",(count/len(dirs))*100,"%")
@@ -96,7 +114,10 @@ class Recognition:
             if confidence < 40:
                 label_text = self.names[label]
                 cv2.rectangle(img, (x, y), (x+w, y+h), (0, 255, 0), 2)
-                cv2.putText(img, self.names[label], (x, y), cv2.FONT_HERSHEY_PLAIN, 1.5, (0, 255, 0), 2)
+                cv2.putText(img, self.names[label], (x, y-5), cv2.FONT_HERSHEY_PLAIN, 1.5, (0, 255, 0), 2)
+            else:
+                cv2.rectangle(img, (x, y), (x+w, y+h), (0, 255, 0), 2)
+                cv2.putText(img, 'Nao Identificado', (x, y-5), cv2.FONT_HERSHEY_PLAIN, 1.5, (0, 255, 0), 2)
             print(confidence)
 
         return img
@@ -120,5 +141,5 @@ class Recognition:
 
 
 if __name__ == '__main__':
-    rec = Recognition()
+    rec = Recognition('training-data', True)
     rec.main_loop()
