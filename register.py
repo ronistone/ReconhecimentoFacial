@@ -46,14 +46,13 @@ class RegisterUser:
                         minSize=(20,20),
                         maxSize=(400,400))
 
-            image1 = image
             if len(faces) > 0:
                 (x,y,w,h) = faces[0]
-                cv2.putText(image1, self.name, (x,y), cv2.FONT_HERSHEY_PLAIN, 1.5, (0,255,0),2)
-                cv2.rectangle(image1, (x,y+20), (x+w, y+h), (0,255,0),2)
-                cv2.imshow('Salvando...', image1)
-                print('Salvando Foto '+str(count))
                 cv2.imwrite(self.path+'/image_'+str(count)+'.jpg',image)
+                cv2.putText(image, self.name, (x,y), cv2.FONT_HERSHEY_PLAIN, 1.5, (0,255,0),2)
+                cv2.rectangle(image, (x,y+20), (x+w, y+h), (0,255,0),2)
+                cv2.imshow('Salvando...', image)
+                print('Salvando Foto '+str(count))
                 count += 1
                 cv2.waitKey(1)
             else:
@@ -61,7 +60,7 @@ class RegisterUser:
                 cv2.imshow('Salvando...', image)
                 cv2.waitKey(1)
 
-            if count > 100:
+            if count > 300:
                 break
 
         cv2.destroyAllWindows()

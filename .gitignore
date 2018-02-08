@@ -2,3 +2,4 @@ training-data/*
 *.pyc
 *.pyo
 __pycache__/
+train.yml
