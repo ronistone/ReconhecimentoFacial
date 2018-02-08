@@ -1,0 +1,4 @@
+training-data/*
+*.pyc
+*.pyo
+__pycache__/
