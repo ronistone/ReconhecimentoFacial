@@ -111,10 +111,13 @@ class Recognition:
         for (x,y,w,h) in rect:
             face_test = gray[y:y+w, x:x+h]
             label, confidence = self.recognizer.predict(face_test)
+
+######################     Face Aceita    #######################################
             if confidence < 40:
                 label_text = self.names[label]
                 cv2.rectangle(img, (x, y), (x+w, y+h), (0, 255, 0), 2)
                 cv2.putText(img, self.names[label], (x, y-5), cv2.FONT_HERSHEY_PLAIN, 1.5, (0, 255, 0), 2)
+################################################################################
             else:
                 cv2.rectangle(img, (x, y), (x+w, y+h), (0, 255, 0), 2)
                 cv2.putText(img, 'Nao Identificado', (x, y-5), cv2.FONT_HERSHEY_PLAIN, 1.5, (0, 255, 0), 2)

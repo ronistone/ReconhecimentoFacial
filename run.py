@@ -2,6 +2,8 @@ from register import RegisterUser
 from recognition import Recognition
 import os
 
+path = 'training-data'
+os.mkdir(path)
 
 while True:
 
@@ -15,8 +17,8 @@ while True:
     if o == '0':
         break
     elif o == '1':
-        RegisterUser('training-data')
+        RegisterUser(path)
 
     elif o == '2':
-        rec = Recognition('training-data')
+        rec = Recognition(path)
         rec.main_loop()
