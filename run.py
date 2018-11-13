@@ -3,7 +3,10 @@ from recognition import Recognition
 import os
 
 path = 'training-data'
-os.mkdir(path)
+try:
+    os.mkdir(path)
+except Exception:
+    pass
 
 while True:
 

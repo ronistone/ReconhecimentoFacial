@@ -1,5 +1,6 @@
-training-data/*
+training-data*
 *.pyc
 *.pyo
 __pycache__/
 train.yml
+.idea*

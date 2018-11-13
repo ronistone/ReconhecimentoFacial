@@ -16,7 +16,7 @@ class Recognition:
                 if(f.read() == '1'):
                     self.isDirty = True
                 else:
-                    self.isDirty = False
+                    self.isDirty = True
         else:
             self.isDirty = True
 
@@ -54,22 +54,33 @@ class Recognition:
 
         return gray, faces
 
-
     def setup(self):
         dirs = os.listdir(self.path)
         self.faces = []
         self.labels = []
 
+        dirs_ord = []
+        for dir_name in dirs:
+            if not dir_name.startswith('user-'):
+                continue
+            name = dir_name.split('-')
+            if len(name) == 3:
+                entry = (int(name[2]), dir_name)
+                dirs_ord.append(entry)
+
+        dirs_ord.sort()
         count = 0
         print("Carregando... ",(count/len(dirs))*100,"%")
-        for dir_name in dirs:
+        print(dirs_ord)
+        for label, dir_name in dirs_ord:
             if not dir_name.startswith('user-'):
                 continue
 
 
-            self.names.append(dir_name.split('-')[1].replace("_"," "))
+            self.names.append (dir_name.split('-')[1].replace("_"," "))
             if self.isDirty:
-                label = int(dir_name.split('-')[2])
+                #label = int(dir_name.split('-')[2])
+                #print(label, " - ", dir_name.split('-')[1].replace("_"," "))
 
                 subject_dir_path = self.path + '/' + dir_name+'/'
                 images_names = os.listdir(subject_dir_path)
